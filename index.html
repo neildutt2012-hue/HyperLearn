@@ -1,1 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HyperLearn — Math & Science K–12</title>
+  <meta name="description" content="HyperLearn — bite-sized, gamified math & science lessons for Grades 1–12. Sample interactive lesson included." />
+  <meta name="theme-color" content="#0f766e" />
 
+  <style>
+    :root{
+      --bg:#f7faf9;
+      --card:#ffffff;
+      --muted:#5b6b6b;
+      --accent:#0f766e;    /* teal/marine primary */
+      --accent-2:#f6c84c;  /* warm yellow accent */
+      --glass: rgba(15,118,110,0.06);
+      --radius:12px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color-scheme: light;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,var(--bg),#eef6f5);
+      color:#0b1220;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+      align-items:center;
+    }
+
+    header{
+      width:100%;
+      max-width:1100px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+      color:inherit;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),#0aa79a);
+      display:grid;place-items:center;color:white;font-weight:700;font-size:20px;
+      box-shadow:0 6px 18px rgba(11,18,32,0.08), inset 0 -6px 12px rgba(0,0,0,0.08);
+    }
+    nav{display:flex;gap:10px;align-items:center}
+    .btn{
+      background:var(--accent);
+      color:white;padding:10px 14px;border-radius:10px;border:0;font-weight:600;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(15,118,110,0.12);
+    }
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(15,118,110,0.12)}
+    main{width:100%;max-width:1100px;display:grid;grid-template-columns:1fr 420px;gap:20px;align-items:start}
+    @media (max-width:980px){ main{grid-template-columns:1fr} header{flex-direction:column;align-items:flex-start} }
+    
+    .hero{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:28px;
+      box-shadow:0 10px 40px rgba(11,18,32,0.06);
+    }
+    .hero h1{margin:0 0 8px 0;font-size:28px}
+    .hero p{margin:0 0 16px;color:var(--muted)}
+    .hero .cta-row{display:flex;gap:12px;align-items:center}
+    .pill{background:var(--glass);padding:6px 10px;border-radius:999px;color:var(--accent);font-weight:700;font-size:13px}
+    .features{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+    .feature{
+      background:linear-gradient(180deg, rgba(15,118,110,0.04), rgba(15,118,110,0.02));
+      border-radius:10px;padding:10px 12px;font-weight:600;color:var(--accent);font-size:13px;
+      display:inline-flex;gap:8px;align-items:center;
+    }
+
+    /* right column */
+    .aside{
+      position:relative;
+      background:transparent;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 6px 20px rgba(11,18,32,0.05);
+    }
+    .curriculum{display:flex;flex-direction:column;gap:8px}
+    .grade{
+      display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px solid rgba(11,18,32,0.03);
+      cursor:pointer;
+    }
+    .small{font-size:13px;color:var(--muted)}
+    .lesson{
+      margin-top:10px;padding:10px;border-radius:8px;background:linear-gradient(180deg,#fff,#fbffff);
+      border:1px solid rgba(15,118,110,0.04);
+    }
+
+    /* interactive sample */
+    .problem{
+      display:flex;flex-direction:column;gap:10px;
+    }
+    .input-row{display:flex;gap:8px;align-items:center}
+    input[type="text"]{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(11,18,32,0.06);font-size:16px}
+    .hint{background:linear-gradient(180deg,#fffef7,#fff8e6);padding:8px;border-radius:8px;border:1px dashed rgba(246,200,76,0.2);font-size:14px}
+    .toast{padding:10px;border-radius:8px;font-weight:700}
+    .xp{display:flex;gap:8px;align-items:center}
+    .xp .meter{height:10px;background:#e6f5f2;border-radius:999px;overflow:hidden;flex:1}
+    .xp .meter > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#0aa79a);width:0%}
+    footer{width:100%;max-width:1100px;color:var(--muted);font-size:13px;padding:10px 0 30px 0}
+    .small-muted{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="#">
+      <div class="logo">HL</div>
+      <div>
+        <div style="font-weight:800">HyperLearn</div>
+        <div class="small-muted">Math & Science • Grades 1–12</div>
+      </div>
+    </a>
+
+    <nav>
+      <button class="btn" id="startBtn">Start Placement</button>
+      <button class="btn ghost" id="aboutBtn">About</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero card" aria-labelledby="hero-heading">
+      <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start">
+        <div style="flex:1">
+          <div class="pill">K–12 • Adaptive • Bite-sized</div>
+          <h1 id="hero-heading">Learn math & science the smart way — daily 10-minute lessons</h1>
+          <p>Short, concept-first lessons + interactive problem solving and challenge projects. Built for steady mastery and curiosity.</p>
+
+          <div class="cta-row">
+            <button class="btn" id="beginLesson">Try a sample lesson</button>
+            <button class="btn ghost" id="seeCurriculum">See curriculum</button>
+          </div>
+
+          <div class="features" aria-hidden="true">
+            <div class="feature">Micro-lessons</div>
+            <div class="feature">Progress + XP</div>
+            <div class="feature">Hints & step grading</div>
+            <div class="feature">Offline-friendly</div>
+          </div>
+        </div>
+
+        <div style="width:220px">
+          <div style="background:linear-gradient(180deg,#fff,#f3fbfa);padding:12px;border-radius:12px">
+            <div style="font-weight:800">Your quick progress</div>
+            <div style="height:10px"></div>
+            <div class="xp" aria-hidden="true">
+              <div class="small-muted">XP</div>
+              <div class="meter" style="flex:1"><i id="xpFill" style="width:0%"></i></div>
+              <div style="width:42px;text-align:right;font-weight:800" id="xpNum">0</div>
+            </div>
+            <div style="height:8px"></div>
+            <div class="small-muted">Streak: <span id="streak">0</span> days</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px" id="mini-summary">
+        <strong>Sample module:</strong> Algebra — equations. <span class="small-muted">(We’ll expand the whole K–12 map as we build.)</span>
+      </div>
+    </section>
+
+    <aside class="aside">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:800">Curriculum (Grades 1–12)</div>
+          <div class="small-muted">Preview</div>
+        </div>
+
+        <div class="curriculum" id="curriculumList" style="margin-top:10px">
+          <!-- JS will inject grade items -->
+        </div>
+
+        <div style="margin-top:12px" class="small-muted">Tip: click a grade to expand sample modules.</div>
+      </div>
+
+      <div class="card" id="sampleLessonCard" aria-live="polite">
+        <div style="font-weight:800;margin-bottom:8px">Sample Lesson — One-step equations</div>
+
+        <div class="lesson">
+          <div style="font-weight:700">Goal</div>
+          <div class="small-muted" style="margin-bottom:8px">Solve equations like <code>x + 5 = 12</code></div>
+
+          <div style="font-weight:700;margin-top:6px">Try it — interactive problem</div>
+          <div class="problem" id="interactiveProblem">
+            <div style="font-weight:700">Problem:</div>
+            <div class="small-muted">Solve for <code>x</code>: <strong>3x − 4 = 11</strong></div>
+
+            <div class="input-row" style="margin-top:6px">
+              <input id="answerInput" type="text" inputmode="numeric" aria-label="Your answer for x" placeholder="Type numeric answer (e.g. 5)" />
+              <button class="btn" id="checkBtn">Check</button>
+              <button class="btn ghost" id="hintBtn" title="Get a hint">Hint</button>
+            </div>
+
+            <div id="hintsArea" style="display:none;margin-top:8px">
+              <div class="hint" id="hintText">Hint 1: Add 4 to both sides → 3x = 15</div>
+            </div>
+
+            <div id="feedbackArea" style="margin-top:8px"></div>
+
+            <div style="margin-top:8px;display:flex;gap:8px;align-items:center;justify-content:space-between">
+              <div class="small-muted">Earn up to <strong>20 XP</strong></div>
+              <div class="small-muted">Difficulty: ★★☆☆☆</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card small-muted">
+        <div style="font-weight:700">Authoring</div>
+        Lessons are Markdown-first. Problems are JSON objects evaluated in the browser.
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    <div style="max-width:1100px;display:flex;justify-content:space-between;flex-wrap:wrap">
+      <div>Made with ❤️ — HyperLearn prototype • Local progress saved to your browser</div>
+      <div class="small-muted">Open-source-ready • Drop into GitHub Pages</div>
+    </div>
+  </footer>
+
+  <script>
+    /***** Simple client-side app logic (no backend) *****
+     * - Curriculum: expandable preview for Grades 1–12
+     * - Interactive problem grader for 3x - 4 = 11
+     * - XP & streak stored in localStorage under "hyperlearn_progress"
+     *
+     * Notes:
+     *  - This is a minimal starter. Expand lessons as Markdown pages or components.
+     *  - All math comparisons parse numbers carefully (Number(x) and trimming).
+     ****************************************************/
+
+    (function(){
+      // --- Utilities ---
+      const $ = (sel, root=document) => root.querySelector(sel);
+      const create = (tag, props={}) => {
+        const el = document.createElement(tag);
+        Object.assign(el, props);
+        return el;
+      };
+
+      // --- Curriculum data (brief preview) ---
+      const curriculum = [];
+      for(let g=1; g<=12; g++){
+        // minimal module list for preview; extend as needed
+        curriculum.push({
+          grade: g,
+          modules: [
+            "Numbers & operations",
+            g <=5 ? "Basic geometry & life science" : (g<=8 ? "Pre-algebra & physical sciences" : "Algebra, Trig & Physics"),
+            "Problem solving & experiments"
+          ]
+        });
+      }
+
+      // render curriculum list
+      const curriculumList = $('#curriculumList');
+      curriculum.forEach(item => {
+        const row = create('div',{className:'grade', tabIndex:0});
+        row.innerHTML = `<div>Grade ${item.grade}</div><div class="small-muted">modules: ${item.modules.length}</div>`;
+        const details = create('div',{className:'lesson', style:'display:none'});
+        details.innerHTML = `<strong>Sample modules</strong>
+          <ul style="margin:8px 0 0 18px;color:var(--muted)">
+            ${item.modules.map(m=>`<li>${m}</li>`).join('')}
+          </ul>
+          <div style="margin-top:8px"><button class="btn ghost" data-grade="${item.grade}">Start Grade ${item.grade}</button></div>
+        `;
+        row.addEventListener('click', ()=> details.style.display = details.style.display === 'none' ? 'block' : 'none');
+        row.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') row.click(); });
+        curriculumList.appendChild(row);
+        curriculumList.appendChild(details);
+      });
+
+      // --- Simple progress store (localStorage) ---
+      const STORAGE_KEY = 'hyperlearn_progress_v1';
+      function loadProgress(){
+        try{
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if(!raw) return {xp:0,streak:0,lastDate:null};
+          return JSON.parse(raw);
+        }catch(e){ return {xp:0,streak:0,lastDate:null}; }
+      }
+      function saveProgress(p){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+      }
+
+      const progress = loadProgress();
+      const xpFill = $('#xpFill');
+      const xpNum = $('#xpNum');
+      const streakEl = $('#streak');
+
+      function renderProgress(){
+        const xp = progress.xp || 0;
+        // cap progress bar to show up to 500 xp as 100%
+        const pct = Math.min(100, Math.round((xp/500)*100));
+        xpFill.style.width = pct + '%';
+        xpNum.textContent = xp;
+        streakEl.textContent = progress.streak || 0;
+      }
+      renderProgress();
+
+      // award XP (and optionally count streak)
+      function awardXP(amount){
+        progress.xp = (progress.xp || 0) + Number(amount);
+        // update streak if done today (simple): check lastDate string 'YYYY-MM-DD'
+        const today = (new Date()).toISOString().slice(0,10);
+        if(progress.lastDate !== today){
+          // if yesterday was lastDate, increment streak; else reset to 1
+          if(progress.lastDate){
+            const last = new Date(progress.lastDate);
+            const diffDays = Math.round((new Date(today) - last)/(1000*60*60*24));
+            if(diffDays === 1) progress.streak = (progress.streak || 0) + 1;
+            else progress.streak = 1;
+          } else {
+            progress.streak = 1;
+          }
+          progress.lastDate = today;
+        }
+        saveProgress(progress);
+        renderProgress();
+      }
+
+      // --- Interactive problem logic ---
+      const correctAnswer = 5; // solution of 3x - 4 = 11 is x = 5 (3*5 -4 = 15 -4 =11) -- verified
+      const answerInput = $('#answerInput');
+      const checkBtn = $('#checkBtn');
+      const hintBtn = $('#hintBtn');
+      const hintsArea = $('#hintsArea');
+      const hintText = $('#hintText');
+      const feedbackArea = $('#feedbackArea');
+
+      let hintsShown = 0;
+
+      function normalizeNumberInput(str){
+        if(typeof str !== 'string') return NaN;
+        // remove commas, spaces; allow leading +/-
+        const s = str.trim().replace(/,/g,'').replace(/\s+/g,'');
+        // support fractional input like "5/1" or "10/2"
+        if(/^\d+\/\d+$/.test(s)){
+          const parts = s.split('/').map(Number);
+          if(parts[1] === 0) return NaN;
+          return parts[0]/parts[1];
+        }
+        const n = Number(s);
+        return Number.isFinite(n) ? n : NaN;
+      }
+
+      function showFeedback(message, ok=false){
+        feedbackArea.innerHTML = '';
+        const div = document.createElement('div');
+        div.className = 'toast';
+        div.style.background = ok ? 'linear-gradient(90deg,#e9fff9,#d6fff3)' : 'linear-gradient(90deg,#fff3f3,#ffecec)';
+        div.style.border = ok ? '1px solid rgba(10,167,154,0.12)' : '1px solid rgba(237,100,100,0.08)';
+        div.style.color = ok ? 'var(--accent)' : '#b33';
+        div.textContent = message;
+        feedbackArea.appendChild(div);
+        // auto-hide after 6s
+        setTimeout(()=>{ if(feedbackArea.contains(div)) feedbackArea.removeChild(div); }, 6000);
+      }
+
+      checkBtn.addEventListener('click', function(){
+        const val = answerInput.value;
+        const n = normalizeNumberInput(val);
+        if(Number.isNaN(n)){
+          showFeedback('Please enter a numeric answer (e.g. 5).', false);
+          return;
+        }
+        // compare with tolerance for floats
+        if(Math.abs(n - correctAnswer) < 1e-9){
+          // award XP: full 20 if no hints used, else 10
+          const xpAward = hintsShown === 0 ? 20 : 10;
+          awardXP(xpAward);
+          showFeedback(`Correct! x = ${correctAnswer}. You earned ${xpAward} XP.`, true);
+          // disable input briefly
+          checkBtn.disabled = true;
+          setTimeout(()=> checkBtn.disabled = false, 1200);
+        } else {
+          // targeted feedback: if user likely forgot to divide
+          if(Math.abs(n*3 - 11 - 4) < 1e-6){
+            showFeedback('Hm — it looks like you multiplied incorrectly. Try isolating x: first add 4, then divide by 3.', false);
+          } else {
+            showFeedback('Not quite. Try a hint (click Hint) — it will reveal the next step.', false);
+          }
+        }
+      });
+
+      hintBtn.addEventListener('click', function(){
+        hintsShown++;
+        if(hintsShown === 1){
+          hintText.textContent = 'Hint 1: Add 4 to both sides → 3x = 15.';
+        } else if(hintsShown === 2){
+          hintText.textContent = 'Hint 2: Now divide both sides by 3 → x = 5.';
+        } else {
+          hintText.textContent = 'Full solution: 3x - 4 = 11 → +4 → 3x = 15 → ÷3 → x = 5.';
+        }
+        hintsArea.style.display = 'block';
+      });
+
+      // keyboard: press Enter in input to check
+      answerInput.addEventListener('keydown', function(e){
+        if(e.key === 'Enter') checkBtn.click();
+      });
+
+      // --- Buttons wiring ---
+      $('#startBtn').addEventListener('click', ()=> {
+        // placement: simple 3-question quick test (placeholder)
+        alert('Placement quiz (prototype): We will add a quick adaptive quiz here. For now, try the sample lesson on the right.');
+      });
+      $('#aboutBtn').addEventListener('click', ()=> {
+        alert('HyperLearn prototype — bite-sized lessons + interactive problems. Author lessons in Markdown and publish to GitHub Pages.');
+      });
+      $('#beginLesson').addEventListener('click', ()=> {
+        document.querySelector('#sampleLessonCard').scrollIntoView({behavior:'smooth', block:'center'});
+      });
+      $('#seeCurriculum').addEventListener('click', ()=> {
+        document.querySelector('#curriculumList').scrollIntoView({behavior:'smooth', block:'center'});
+      });
+
+      // initialize some default progress if empty
+      if(!localStorage.getItem(STORAGE_KEY)){
+        saveProgress({xp:0,streak:0,lastDate:null});
+      }
+      renderProgress();
+
+      // small accessibility: focus first input for sample
+      setTimeout(()=> answerInput.focus(), 500);
+
+      // expose some debug to window for easy testing in prototype
+      window.HyperLearn = {
+        loadProgress, saveProgress, awardXP
+      };
+    })();
+  </script>
+</body>
+</html>
